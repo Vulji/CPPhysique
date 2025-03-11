@@ -28,6 +28,16 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wind", meta = (AllowPrivateAccess = "true"))
 	FVector WindDirection = FVector(0, 0, 1);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	class UInputAction* IncreaseWindAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	class UInputAction* DecreaseWindAction;
+
+
 	void ApplyWind();
 	void IncreaseWindStrength();
 	void DecreaseWindStrength();
