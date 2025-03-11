@@ -23,8 +23,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Notify when the ball hits the ground
+	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, 
+		bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
+
 private:
 	void Move(const FInputActionValue& Value);
+	void Jump();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
@@ -36,12 +41,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	class UInputAction* MovementAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MoveForce = 1000.0f; // Adjust the force applied
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	class UInputAction* JumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	bool bUseImpulse = false; // Toggle between AddForce or AddImpulse
+	float MoveForce = 1000000.0f;
 
-	
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
+	float JumpImpulse = 800000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
+	int MaxJumps = 2; // Double Jump
+
+private:
+	int JumpCount = 0;
+	bool bIsGrounded = true; // Track if the ball is touching the ground
 };
