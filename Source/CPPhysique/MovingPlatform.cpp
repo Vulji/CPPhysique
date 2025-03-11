@@ -48,9 +48,9 @@ void AMovingPlatform::MovePlatform(float DeltaTime)
     FVector CurrentLocation = GetActorLocation();
 
     FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
-    FVector Velocity = Direction * MoveSpeed * DeltaTime * ForceMultiplier;
+    FVector Force = Direction * MoveSpeed * ForceMultiplier;
 
-    PlatformMesh->SetPhysicsLinearVelocity(Velocity);
+    PlatformMesh->AddForce(Force, NAME_None, true);
 
     float DistanceToTarget = FVector::Dist(CurrentLocation, TargetLocation);
     if (DistanceToTarget < 50.0f)
@@ -58,3 +58,4 @@ void AMovingPlatform::MovePlatform(float DeltaTime)
         CurrentWaypointIndex = (CurrentWaypointIndex + 1) % Waypoints.Num();
     }
 }
+
