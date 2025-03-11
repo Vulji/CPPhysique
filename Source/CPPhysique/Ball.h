@@ -13,7 +13,6 @@ class CPPHYSIQUE_API ABall : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	ABall();
 
 protected:
@@ -22,8 +21,7 @@ protected:
 public:    
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	// Notify when the ball hits the ground
+	
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, 
 		bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
@@ -51,9 +49,9 @@ public:
 	float JumpImpulse = 800000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jumping")
-	int MaxJumps = 2; // Double Jump
+	int MaxJumps = 2; 
 
 private:
 	int JumpCount = 0;
-	bool bIsGrounded = true; // Track if the ball is touching the ground
+	bool bIsGrounded = true;
 };

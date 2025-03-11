@@ -6,17 +6,14 @@
 AMovingPlatform::AMovingPlatform()
 {
     PrimaryActorTick.bCanEverTick = true;
-
-    // Create the static mesh component
+    
     PlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
     RootComponent = PlatformMesh;
-
-    // Enable physics
+    
     PlatformMesh->SetSimulatePhysics(true);
     PlatformMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     PlatformMesh->SetCollisionObjectType(ECC_WorldDynamic);
-
-    // Load a default mesh
+    
     static ConstructorHelpers::FObjectFinder<UStaticMesh> PlatformMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube"));
     if (PlatformMeshAsset.Succeeded())
     {

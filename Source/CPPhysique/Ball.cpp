@@ -4,21 +4,17 @@
 #include "GameFramework/PlayerController.h"
 #include "Components/StaticMeshComponent.h"
 
-// Sets default values
 ABall::ABall()
 {
     PrimaryActorTick.bCanEverTick = true;
-
-    // Create a static mesh component for the ball
+    
     BallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BallMesh"));
     RootComponent = BallMesh;
-
-    // Enable physics
+    
     BallMesh->SetSimulatePhysics(true);
     BallMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
-// Called when the game starts or when spawned
 void ABall::BeginPlay()
 {
     Super::BeginPlay();
@@ -35,8 +31,7 @@ void ABall::BeginPlay()
         EnableInput(PlayerController);
         UE_LOG(LogTemp, Warning, TEXT("Pawn is receiving input!"));
     }
-
-    // Bind input mapping context
+    
     if (PlayerController)
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -47,17 +42,16 @@ void ABall::BeginPlay()
     }
 }
 
-// Called every frame
 void ABall::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
     FVector Start = BallMesh->GetComponentLocation();
-    FVector End = Start - FVector(0, 0, 50); // Cast downward
+    FVector End = Start - FVector(0, 0, 50); 
 
     FHitResult Hit;
     FCollisionQueryParams QueryParams;
-    QueryParams.AddIgnoredActor(this); // Ignore self
+    QueryParams.AddIgnoredActor(this); 
 
     if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, QueryParams))
     {
@@ -74,7 +68,6 @@ void ABall::Tick(float DeltaTime)
 }
 
 
-// Setup Enhanced Input
 void ABall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -87,7 +80,6 @@ void ABall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
     }
 }
 
-// Movement logic
 void ABall::Move(const FInputActionValue& Value)
 {
     FVector2D MovementVector = Value.Get<FVector2D>();
@@ -102,7 +94,6 @@ void ABall::Move(const FInputActionValue& Value)
     }
 }
 
-// Jump logic
 void ABall::Jump()
 {
     if (JumpCount < MaxJumps) 
@@ -111,23 +102,22 @@ void ABall::Jump()
         BallMesh->AddImpulse(JumpForce, NAME_None, true);
         JumpCount++;
 
-        bIsGrounded = false; // Set to false because we are now airborne
+        bIsGrounded = false;
 
         UE_LOG(LogTemp, Warning, TEXT("Jump! Count: %d"), JumpCount);
     }
 }
 
-// Detect landing and reset jump count
 void ABall::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, 
     bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
     Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-    // If the ball lands on a relatively horizontal surface
-    if (HitNormal.Z > 0.7f && !bIsGrounded) // Make sure it's a flat-enough surface
+    
+    if (HitNormal.Z > 0.7f && !bIsGrounded) 
     {
-        JumpCount = 0; // Reset jumps
-        bIsGrounded = true; // Ball is now grounded
+        JumpCount = 0;
+        bIsGrounded = true; 
         UE_LOG(LogTemp, Warning, TEXT("Landed! Jump reset."));
     }
 }
