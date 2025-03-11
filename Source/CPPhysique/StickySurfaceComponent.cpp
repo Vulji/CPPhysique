@@ -1,6 +1,6 @@
 #include "StickySurfaceComponent.h"
-#include "Components/PrimitiveComponent.h"
 #include "GameFramework/Actor.h"
+#include "Components/PrimitiveComponent.h"
 #include "TimerManager.h"
 
 UStickySurfaceComponent::UStickySurfaceComponent()
@@ -11,15 +11,21 @@ UStickySurfaceComponent::UStickySurfaceComponent()
 void UStickySurfaceComponent::BeginPlay()
 {
     Super::BeginPlay();
-    
+
     UPrimitiveComponent* ParentComp = GetOwner()->FindComponentByClass<UPrimitiveComponent>();
     if (ParentComp)
     {
         ParentComp->OnComponentBeginOverlap.AddDynamic(this, &UStickySurfaceComponent::OnComponentBeginOverlap);
         ParentComp->OnComponentEndOverlap.AddDynamic(this, &UStickySurfaceComponent::OnComponentEndOverlap);
     }
-    
+
     GetWorld()->GetTimerManager().SetTimer(StickyCheckTimer, this, &UStickySurfaceComponent::ApplyStickyForce, 0.01f, true);
+}
+
+void UStickySurfaceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    ApplyStickyForce();
 }
 
 void UStickySurfaceComponent::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
@@ -46,7 +52,7 @@ void UStickySurfaceComponent::ApplyStickyForce()
 {
     if (StickyObjects.Num() == 0) return;
 
-    FVector SurfaceNormal = GetOwner()->GetActorUpVector(); 
+    FVector SurfaceNormal = GetOwner()->GetActorUpVector();
 
     for (UPrimitiveComponent* StickyObject : StickyObjects)
     {
