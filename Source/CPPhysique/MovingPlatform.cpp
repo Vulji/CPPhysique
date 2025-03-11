@@ -1,0 +1,63 @@
+#include "MovingPlatform.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/Actor.h"
+#include "UObject/ConstructorHelpers.h"
+
+AMovingPlatform::AMovingPlatform()
+{
+    PrimaryActorTick.bCanEverTick = true;
+
+    // Create the static mesh component
+    PlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
+    RootComponent = PlatformMesh;
+
+    // Enable physics
+    PlatformMesh->SetSimulatePhysics(true);
+    PlatformMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    PlatformMesh->SetCollisionObjectType(ECC_WorldDynamic);
+
+    // Load a default mesh
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> PlatformMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube"));
+    if (PlatformMeshAsset.Succeeded())
+    {
+        PlatformMesh->SetStaticMesh(PlatformMeshAsset.Object);
+    }
+}
+
+void AMovingPlatform::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (Waypoints.Num() == 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No waypoints set for MovingPlatform!"));
+        return;
+    }
+
+    SetActorLocation(Waypoints[0]);
+}
+
+void AMovingPlatform::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+    MovePlatform(DeltaTime);
+}
+
+void AMovingPlatform::MovePlatform(float DeltaTime)
+{
+    if (Waypoints.Num() == 0) return;
+
+    FVector TargetLocation = Waypoints[CurrentWaypointIndex];
+    FVector CurrentLocation = GetActorLocation();
+
+    FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal();
+    FVector Velocity = Direction * MoveSpeed * DeltaTime * ForceMultiplier;
+
+    PlatformMesh->SetPhysicsLinearVelocity(Velocity);
+
+    float DistanceToTarget = FVector::Dist(CurrentLocation, TargetLocation);
+    if (DistanceToTarget < 50.0f)
+    {
+        CurrentWaypointIndex = (CurrentWaypointIndex + 1) % Waypoints.Num();
+    }
+}
