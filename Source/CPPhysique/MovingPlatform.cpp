@@ -37,8 +37,25 @@ void AMovingPlatform::BeginPlay()
 void AMovingPlatform::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    FVector PreviousLocation = GetActorLocation();
     MovePlatform(DeltaTime);
+    FVector NewLocation = GetActorLocation();
+    FVector PlatformVelocity = (NewLocation - PreviousLocation) / DeltaTime;
+
+    TArray<AActor*> OverlappingActors;
+    PlatformMesh->GetOverlappingActors(OverlappingActors);
+
+    for (AActor* Actor : OverlappingActors)
+    {
+        UPrimitiveComponent* ActorComponent = Cast<UPrimitiveComponent>(Actor->FindComponentByClass<UPrimitiveComponent>());
+        if (ActorComponent && ActorComponent->IsSimulatingPhysics())
+        {
+            ActorComponent->SetPhysicsLinearVelocity(PlatformVelocity + ActorComponent->GetPhysicsLinearVelocity());
+        }
+    }
 }
+
 
 void AMovingPlatform::MovePlatform(float DeltaTime)
 {
