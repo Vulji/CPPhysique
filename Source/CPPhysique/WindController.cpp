@@ -57,13 +57,13 @@ void AWindController::ApplyWind()
 
 void AWindController::IncreaseWindStrength()
 {
-    WindForce += 10000.0f;
+    WindForce += 1000.0f;
     UE_LOG(LogTemp, Warning, TEXT("Wind Strength Increased: %f"), WindForce);
 }
 
 void AWindController::DecreaseWindStrength()
 {
-    WindForce = FMath::Max(WindForce - 10000.0f, 0.0f);
+    WindForce = FMath::Max(WindForce - 1000.0f, 0.0f);
     UE_LOG(LogTemp, Warning, TEXT("Wind Strength Decreased: %f"), WindForce);
 }
 
